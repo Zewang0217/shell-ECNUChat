@@ -12,6 +12,7 @@
 - **⚡ 实时执行**：转换后立即执行，支持结果展示
 - **📖 历史记录**：命令历史保存，支持补全功能
 - **🎯 WSL优化**：专为WSL环境优化的Shell助手
+- **⚙️ 速率限制控制**：可灵活开启/关闭API请求限制，优化使用体验
 
 ## 如何添加API令牌
 
@@ -196,6 +197,8 @@ python3 ecnu_shell_assistant.py [选项]
 - `config [key] [value]`：修改配置项
 - `model`：查看当前模型
 - `model [model_name]`：切换模型
+- `rate_limit on/off`：开启/关闭速率限制功能
+- `rate_limit status`：查看当前速率限制状态
 - `teach`：进入助教模式，提供Linux命令学习功能
 
 ### 显示配置选项

@@ -139,6 +139,9 @@ class ECNUShellAssistant:
             'requests': []  # 存储请求时间戳
         }
         
+        # 初始化速率限制控制标志（默认开启）
+        self.rate_limit_enabled = True
+        
         self.headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.api_key}" if self.api_key else ""
@@ -1417,6 +1420,10 @@ class ECNUShellAssistant:
     
     def _check_rate_limit(self):
         """检查是否超过API速率限制"""
+        # 如果速率限制已关闭，直接返回True
+        if not getattr(self, 'rate_limit_enabled', True):
+            return True
+            
         current_time = time.time()
         
         # 清理过期的请求记录
@@ -1559,9 +1566,10 @@ class ECNUShellAssistant:
            - config [key] [value]: 修改配置项
            - model: 查看当前模型
            - model [model_name]: 切换模型
+           - rate_limit on/off: 开启/关闭速率限制功能
+           - rate_limit status: 查看当前速率限制状态
         
         3. 实用功能:
-           - Tab键补全: 支持命令历史和文件名补全
            - 命令执行超时保护: 防止命令执行时间过长
            - 彩色输出: 在支持的终端中显示彩色错误信息
            - 执行日志: 自动记录命令执行历史和结果
@@ -1757,6 +1765,19 @@ class ECNUShellAssistant:
                                 print("可用模型:", ", ".join(self.available_models))
                         else:
                             print("用法: model 或 model [model_name]")
+                        continue
+                    # 速率限制控制命令
+                    elif user_input.lower() in ['rate_limit off', 'ratelimit off']:
+                        self.rate_limit_enabled = False
+                        print("✅ 速率限制已关闭")
+                        continue
+                    elif user_input.lower() in ['rate_limit on', 'ratelimit on']:
+                        self.rate_limit_enabled = True
+                        print("✅ 速率限制已开启")
+                        continue
+                    elif user_input.lower() in ['rate_limit status', 'ratelimit status']:
+                        status = "开启" if self.rate_limit_enabled else "关闭"
+                        print(f"📊 当前速率限制状态: {status}")
                         continue
                     # 助教模式命令
                     elif user_input.lower().startswith('teach'):
